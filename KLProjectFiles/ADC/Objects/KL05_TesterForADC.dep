@@ -1,0 +1,42 @@
+Dependencies for Project 'KL05', Target 'TesterForADC': (DO NOT MODIFY !)
+CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
+F (.\main.c)(0x6075F1FD)(--c99 --gnu -c --cpu Cortex-M0+ -g -O0 --apcs=interwork --split_sections-I.\RTE\_TesterForADC-IC:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DMKL05Z32xxx4-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\MKL05Z4.h)(0x51C02128)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\core_cm0plus.h)(0x5D25F326)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_version.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\system_MKL05Z4.h)(0x51C02128)
+I (uart.h)(0x605E0CFE)
+I (ADC.h)(0x605E1ADA)
+F (.\frdm_bsp.h)(0x605E099E)()
+F (.\uart.c)(0x605E0D0D)(--c99 --gnu -c --cpu Cortex-M0+ -g -O0 --apcs=interwork --split_sections-I.\RTE\_TesterForADC-IC:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DMKL05Z32xxx4-o .\objects\uart.o --omf_browse .\objects\uart.crf --depend .\objects\uart.d)
+I (uart.h)(0x605E0CFE)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\MKL05Z4.h)(0x51C02128)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\core_cm0plus.h)(0x5D25F326)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_version.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\system_MKL05Z4.h)(0x51C02128)
+F (.\uart.h)(0x605E0CFE)()
+F (.\ADC.c)(0x6071FE35)(--c99 --gnu -c --cpu Cortex-M0+ -g -O0 --apcs=interwork --split_sections-I.\RTE\_TesterForADC-IC:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DMKL05Z32xxx4-o .\objects\adc.o --omf_browse .\objects\adc.crf --depend .\objects\adc.d)
+I (ADC.h)(0x605E1ADA)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\MKL05Z4.h)(0x51C02128)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\core_cm0plus.h)(0x5D25F326)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_version.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\system_MKL05Z4.h)(0x51C02128)
+F (.\ADC.h)(0x605E1ADA)()
+F (RTE\Device\MKL05Z32xxx4\startup_MKL05Z4.s)(0x51C02128)(--cpu Cortex-M0+ -g --apcs=interwork -I.\RTE\_TesterForADC-IC:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "MKL05Z32xxx4 SETA 1"--list .\listings\startup_mkl05z4.lst --xref -o .\objects\startup_mkl05z4.o --depend .\objects\startup_mkl05z4.d)
+F (RTE\Device\MKL05Z32xxx4\system_MKL05Z4.c)(0x51C02128)(--c99 --gnu -c --cpu Cortex-M0+ -g -O0 --apcs=interwork --split_sections-I.\RTE\_TesterForADC-IC:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="529" -D_RTE_ -DMKL05Z32xxx4-o .\objects\system_mkl05z4.o --omf_browse .\objects\system_mkl05z4.crf --depend .\objects\system_mkl05z4.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\MKL05Z4.h)(0x51C02128)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\core_cm0plus.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_version.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25F326)
+I (C:\Users\Admin\AppData\Local\Arm\Packs\Keil\Kinetis_KLxx_DFP\1.3.0\Device\Include\system_MKL05Z4.h)(0x51C02128)

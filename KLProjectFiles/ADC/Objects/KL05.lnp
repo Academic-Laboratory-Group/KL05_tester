@@ -1,0 +1,10 @@
+--cpu Cortex-M0+
+".\objects\main.o"
+".\objects\uart.o"
+".\objects\adc.o"
+".\objects\startup_mkl05z4.o"
+".\objects\system_mkl05z4.o"
+--strict --scatter ".\Objects\KL05.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\KL05.map" -o .\Objects\KL05.axf
