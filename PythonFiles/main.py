@@ -183,8 +183,8 @@ def main():
                 time.sleep(5)
                 serialSTM = serial_open(values['-STMCOM-'], 115200)
 
-                #flash_micro("KL.ADC.hex", values['-KLDRIVE-'])
-                ##time.sleep(5)
+                flash_micro("KL.ADC.hex", values['-KLDRIVE-'])
+                time.sleep(5)
                 serialKL = serial_open(values['-KLCOM-'], 28800)
 
                 # for each ADC channel
