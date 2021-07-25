@@ -60,8 +60,6 @@ def drive_list():
 # ------------------------------
 def create_layout():
     serialList = serial_ports()
-    if not serialList:
-        serialList.append('unconnected')
     driveList = drive_list()
     layout = [[sg.Text('KL05 Tester', size=(40, 1),
                        justification='center', font='Helvetica 20')],
@@ -184,10 +182,12 @@ def main():
             exit(0)
 
         # check if start button was pressed
-        if event in '-STMCOM-' or event in '-KLCOM-':
+        if event in '-REFRESHBUTTON-':
             serialList = serial_ports()
-            window.Element('-STMCOM-').Update(serialList)
-            window.Element('-KLCOM-').Update(serialList)
+            window.Element('-KLCOM-').Update(values=serialList,
+                                             value=serialList[0])
+            window.Element('-STMCOM-').Update(values=serialList,
+                                              value=serialList[0])
 
         # check if start button was pressed
         if event in '-STARTBUTTON-':
