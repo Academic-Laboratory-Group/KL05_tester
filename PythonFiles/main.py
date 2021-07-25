@@ -71,20 +71,21 @@ def create_layout():
                         key="-TESTTYPE-"),
                sg.Button('Start', key="-STARTBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
                          button_color="GREEN"),
-               sg.Text(text="asdf", key="-OUTPUTTEXT-", size=(15, 1), pad=((20, 0), 3), font='Helvetica 14')],
-              [sg.Text('Dysk KL05', size=(10, 1),
+               sg.Button('Refresh ports', key="-REFRESHBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
+                         button_color="BLUE")],
+              [sg.Text('Disk KL05', size=(10, 1),
                        justification='center', font='Helvetica 14'),
                sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3),
                         default_value=driveList[0], key="-KLDRIVE-"),
-               sg.Button('Refresh ports', key="-REFRESHBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
-                         button_color="BLUE")],
-              [sg.Text('Com KL05', size=(10, 1),
+               sg.Text(text="asdf", key="-OUTPUTTEXT-", size=(30, 1),
+                       pad=((20, 0), 3), font='Helvetica 14')],
+              [sg.Text('COM KL05', size=(10, 1),
                        justification='center', font='Helvetica 14'),
                sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-KLCOM-")],
-              [sg.Text('Dysk STM32', size=(10, 1),
+              [sg.Text('Disk STM32', size=(10, 1),
                        justification='center', font='Helvetica 14'),
                sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3), default_value=driveList[0], key="-STMDRIVE-")],
-              [sg.Text('Com STM32', size=(10, 1),
+              [sg.Text('COM STM32', size=(10, 1),
                        justification='center', font='Helvetica 14'),
                sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-STMCOM-")]
               ]
@@ -106,8 +107,8 @@ def draw_figure(canvas, figure):
 # Function to draw on a matplotlib canvas
 # ---------------------------------------
 def update_fig(fig_agg, ax, x, y, c, label):
-    ax.set_xlabel("Zadana wartość")
-    ax.set_ylabel("Zmierzona wartość")
+    ax.set_xlabel("Given value")
+    ax.set_ylabel("Measured value")
     ax.set_xlim([-1, 4200])
     ax.set_ylim([-1, 4200])
     ax.plot(x, y, c, label=label)
@@ -197,10 +198,6 @@ def main():
 
                 window.Element('-OUTPUTTEXT-').Update("Starting ADC test")
                 window.refresh()
-                # clear canvas and prepare colors for ADC channels
-                ax.cla()
-                ax.grid()
-                color = ["b.", "r.", "y.", "g.", "c.", "m."]
 
                 # flash devices and then open serial ports
                 flash_micro("STM.ADC.hex", values['-STMDRIVE-'])
@@ -211,42 +208,53 @@ def main():
                 time.sleep(5)
                 serialKL = serial_open(values['-KLCOM-'], 28800)
 
-                # for each ADC channel
-                for i in range(0, 6):
-                    DataX = np.array([])
-                    DataY = np.array([])
-
+                if serialSTM == [] and serialKL == []:
                     window.Element(
-                        '-OUTPUTTEXT-').Update("Testing ADC {}".format(i))
-                    window.refresh()
-                    # set on KL next ADC channel
-                    serial_send(serialKL, str(i + 1) + '\n')
-                    serial_receive(serialKL)
-
-                    # send popup to connect next channel
-                    sg.popup_ok("Podłącz kanał {}".format(i))
-
-                    # for each tenth value from 0 to 4095
-                    for x in range(0, 4096, 10):
-                        # set new DAC value on Nucleo and save it as X value
-                        serial_send(serialSTM, "{:04d}".format(x) + '\n')
-                        data = str(serial_receive(serialSTM))
-                        DataX = np.append(DataX, int(data))
-
-                        # read value from KL and save it as Y value
-                        serial_send(serialKL, '0\n')
-                        data = str(serial_receive(serialKL))
-                        DataY = np.append(DataY, int(data))
-
-                    # update canvas and refresh window
-                    update_fig(fig_agg, ax, DataX, DataY,
-                               color[i], "ADC {}".format(i))
+                        '-OUTPUTTEXT-').Update("Disconnected, check ports settings")
                     window.refresh()
 
-                window.Element('-OUTPUTTEXT-').Update("Koniec testu")
-                # free serial ports
-                serialSTM.close()
-                serialKL.close()
+                else:
+                    # clear canvas and prepare colors for ADC channels
+                    ax.cla()
+                    ax.grid()
+                    color = ["b.", "r.", "y.", "g.", "c.", "m."]
+
+                    # for each ADC channel
+                    for i in range(0, 6):
+                        DataX = np.array([])
+                        DataY = np.array([])
+
+                        window.Element(
+                            '-OUTPUTTEXT-').Update("Testing ADC {}".format(i))
+                        window.refresh()
+                        # set on KL next ADC channel
+                        serial_send(serialKL, str(i + 1) + '\n')
+                        serial_receive(serialKL)
+
+                        # send popup to connect next channel
+                        sg.popup_ok("Connect next channel {}".format(i))
+
+                        # for each tenth value from 0 to 4095
+                        for x in range(0, 4096, 10):
+                            # set new DAC value on Nucleo and save it as X value
+                            serial_send(serialSTM, "{:04d}".format(x) + '\n')
+                            data = str(serial_receive(serialSTM))
+                            DataX = np.append(DataX, int(data))
+
+                            # read value from KL and save it as Y value
+                            serial_send(serialKL, '0\n')
+                            data = str(serial_receive(serialKL))
+                            DataY = np.append(DataY, int(data))
+
+                        # update canvas and refresh window
+                        update_fig(fig_agg, ax, DataX, DataY,
+                                   color[i], "ADC {}".format(i))
+                        window.refresh()
+
+                    window.Element('-OUTPUTTEXT-').Update("End of the test")
+                    # free serial ports
+                    serialSTM.close()
+                    serialKL.close()
 
     window.close()
 
