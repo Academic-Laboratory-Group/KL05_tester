@@ -10,10 +10,13 @@ import matplotlib.pyplot as plt
 import serial.tools.list_ports
 import win32api
 
+g_possibleTypesOfTest = ['ADC', 'Power Supply']
 
 # -------------------------------------------
 # Function to find all available serial ports
 # -------------------------------------------
+
+
 def serial_ports():
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -33,6 +36,10 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
+
+    if not result:
+        result.append('unconnected')
+
     return result
 
 
@@ -52,21 +59,27 @@ def drive_list():
 # Function to create main layout
 # ------------------------------
 def create_layout():
-    typeOfTest = ['ADC']
     serialList = serial_ports()
+    if not serialList:
+        serialList.append('unconnected')
     driveList = drive_list()
     layout = [[sg.Text('KL05 Tester', size=(40, 1),
                        justification='center', font='Helvetica 20')],
               [sg.Canvas(size=(640, 480), key='-CANVAS-')],
               [sg.Text('Test', size=(10, 1),
                        justification='center', font='Helvetica 14'),
-               sg.Combo(typeOfTest, size=(20, 1), pad=((20, 0), 3), default_value=typeOfTest[0], key="-TESTTYPE-"),
-               sg.Button('Start', key="-STARTBUTTON-", size=(10, 0), pad=((20, 0), 3), font='Helvetica 12',
+               sg.Combo(g_possibleTypesOfTest, size=(20, 1), pad=((20, 0), 3),
+                        default_value=g_possibleTypesOfTest[0],
+                        key="-TESTTYPE-"),
+               sg.Button('Start', key="-STARTBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
                          button_color="GREEN"),
                sg.Text(text="asdf", key="-OUTPUTTEXT-", size=(15, 1), pad=((20, 0), 3), font='Helvetica 14')],
               [sg.Text('Dysk KL05', size=(10, 1),
                        justification='center', font='Helvetica 14'),
-               sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3), default_value=driveList[0], key="-KLDRIVE-")],
+               sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3),
+                        default_value=driveList[0], key="-KLDRIVE-"),
+               sg.Button('Refresh ports', key="-REFRESHBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
+                         button_color="BLUE")],
               [sg.Text('Com KL05', size=(10, 1),
                        justification='center', font='Helvetica 14'),
                sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-KLCOM-")],
@@ -108,7 +121,11 @@ def update_fig(fig_agg, ax, x, y, c, label):
 # Open serial port
 # ----------------
 def serial_open(port_number, speed):
-    ser = serial.Serial(port_number, speed, timeout=0.1)
+    ser = []
+    try:
+        ser = serial.Serial(port_number, speed, timeout=0.1)
+    except:
+        sg.popup("Serial disconnected: " + port_number)
     return ser
 
 
@@ -162,8 +179,15 @@ def main():
     # program loop
     while True:
         event, values = window.read(timeout=10)
+
         if event in ('Exit', None):
-            exit(69)
+            exit(0)
+
+        # check if start button was pressed
+        if event in '-STMCOM-' or event in '-KLCOM-':
+            serialList = serial_ports()
+            window.Element('-STMCOM-').Update(serialList)
+            window.Element('-KLCOM-').Update(serialList)
 
         # check if start button was pressed
         if event in '-STARTBUTTON-':
@@ -192,7 +216,8 @@ def main():
                     DataX = np.array([])
                     DataY = np.array([])
 
-                    window.Element('-OUTPUTTEXT-').Update("Testing ADC {}".format(i))
+                    window.Element(
+                        '-OUTPUTTEXT-').Update("Testing ADC {}".format(i))
                     window.refresh()
                     # set on KL next ADC channel
                     serial_send(serialKL, str(i + 1) + '\n')
@@ -214,7 +239,8 @@ def main():
                         DataY = np.append(DataY, int(data))
 
                     # update canvas and refresh window
-                    update_fig(fig_agg, ax, DataX, DataY, color[i], "ADC {}".format(i))
+                    update_fig(fig_agg, ax, DataX, DataY,
+                               color[i], "ADC {}".format(i))
                     window.refresh()
 
                 window.Element('-OUTPUTTEXT-').Update("Koniec testu")
