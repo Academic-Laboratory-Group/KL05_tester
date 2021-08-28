@@ -2,6 +2,7 @@ import glob
 import os
 import sys
 import time
+import subprocess
 
 import PySimpleGUI as sg
 import numpy as np
@@ -61,35 +62,36 @@ def drive_list():
 def create_layout():
     serialList = serial_ports()
     driveList = drive_list()
+    col1 = [[sg.Text('Test', size=(10, 1),
+                     font='Helvetica 14'),
+            sg.Combo(g_possibleTypesOfTest, size=(20, 1), pad=((20, 0), 3),
+                     default_value=g_possibleTypesOfTest[0],
+                     enable_events=True,
+                     key="-TESTTYPE-")],
+            [sg.Text('Disk KL05', size=(10, 1),
+                     font='Helvetica 14'),
+            sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3),
+                     default_value=driveList[0], key="-KLDRIVE-")],
+            [sg.Text('COM KL05', size=(10, 1),
+                     font='Helvetica 14'),
+            sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-KLCOM-")],
+            [sg.Text('Disk STM32', size=(10, 1),
+                     font='Helvetica 14'),
+            sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3), default_value=driveList[0], key="-STMDRIVE-")],
+            [sg.Text('COM STM32', size=(10, 1),
+                     font='Helvetica 14'),
+            sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-STMCOM-")]]
+    col2 = [[sg.Button('Start', key="-STARTBUTTON-",
+                       size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
+                       button_color="GREEN"),
+             sg.Button('Refresh ports', key="-REFRESHBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
+                       button_color="BLUE")],
+            [sg.Text(text="", key="-OUTPUTTEXT-", size=(30, 5),
+                     pad=((20, 0), 3), font='Helvetica 14')]]
     layout = [[sg.Text('KL05 Tester', size=(40, 1),
                        justification='center', font='Helvetica 20')],
               [sg.Canvas(size=(640, 480), key='-CANVAS-')],
-              [sg.Text('Test', size=(10, 1),
-                       justification='center', font='Helvetica 14'),
-               sg.Combo(g_possibleTypesOfTest, size=(20, 1), pad=((20, 0), 3),
-                        default_value=g_possibleTypesOfTest[0],
-                        enable_events=True,
-                        key="-TESTTYPE-"),
-               sg.Button('Start', key="-STARTBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
-                         button_color="GREEN"),
-               sg.Button('Refresh ports', key="-REFRESHBUTTON-", size=(15, 0), pad=((20, 0), 3), font='Helvetica 12',
-                         button_color="BLUE")],
-              [sg.Text('Disk KL05', size=(10, 1),
-                       justification='center', font='Helvetica 14'),
-               sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3),
-                        default_value=driveList[0], key="-KLDRIVE-"),
-               sg.Text(text="asdf", key="-OUTPUTTEXT-", size=(30, 1),
-                       pad=((20, 0), 3), font='Helvetica 14')],
-              [sg.Text('COM KL05', size=(10, 1),
-                       justification='center', font='Helvetica 14'),
-               sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-KLCOM-")],
-              [sg.Text('Disk STM32', size=(10, 1),
-                       justification='center', font='Helvetica 14'),
-               sg.Combo(driveList, size=(20, 1), pad=((20, 0), 3), default_value=driveList[0], key="-STMDRIVE-")],
-              [sg.Text('COM STM32', size=(10, 1),
-                       justification='center', font='Helvetica 14'),
-               sg.Combo(serialList, size=(20, 1), pad=((20, 0), 3), default_value=serialList[0], key="-STMCOM-")]
-              ]
+              [sg.Column(col1, vertical_alignment='top'), sg.Column(col2, vertical_alignment='top')]]
 
     return layout
 
@@ -153,14 +155,19 @@ def serial_send(my_serial, data):
 def flash_micro(file, drive):
     command = 'cmd /c "copy hexFiles\\{} {}"'.format(file, drive)
     print(command)
-    os.system(command)
+    if os.system(command):
+        raise Exception('Flash error with output: ' +
+                        subprocess.check_output(['ls', '-l']))
 
 
 # -----------------------------------------------------------------
 # Exception info on popup window
 # -----------------------------------------------------------------
-def process_exception(message):
+def process_exception(window, values, message):
     sg.popup(message)
+    window.Element(
+        '-OUTPUTTEXT-').Update(values['-TESTTYPE-'] + " test interrupted. " + message)
+    window.refresh()
 
 
 # -----------------------------------------------------------------
@@ -227,27 +234,31 @@ def main():
                 # flash devices and then open serial ports
                 try:
                     flash_micro("STM.ADC.hex", values['-STMDRIVE-'])
-                except:
-                    process_exception(
-                        "Error during flashing STM with serial port: " + values['-STMDRIVE-'])
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e))
+                    continue
                 time.sleep(5)
                 try:
                     serialSTM = serial_open(values['-STMCOM-'], 115200)
-                except:
-                    process_exception(
-                        "Error during opening serial to STM with serial port: " + values['-STMCOM-'])
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during opening serial to STM with serial port: " + values['-STMCOM-'] + "\n" + str(e))
+                    continue
 
                 try:
                     flash_micro("KL.ADC.hex", values['-KLDRIVE-'])
-                except:
-                    process_exception(
-                        "Error during flashing KL with serial port: " + values['-KLDRIVE-'])
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during flashing KL with serial port: " + values['-KLDRIVE-'] + "\n" + str(e))
+                    continue
                 time.sleep(5)
                 try:
                     serialKL = serial_open(values['-KLCOM-'], 28800)
-                except:
-                    process_exception(
-                        "Error during opening serial to KL with serial port: " + values['-KLCOM-'])
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during opening serial to KL with serial port: " + values['-KLCOM-'] + "\n" + str(e))
+                    continue
 
                 if serialSTM == [] and serialKL == [] or serialSTM == serialKL:
                     window.Element(
@@ -306,21 +317,18 @@ def main():
 
                 # flash devices and then open serial ports
                 try:
-                    flash_micro("STM.ADC.hex", values['-STMDRIVE-'])
-                except:
-                    process_exception(
-                        "Error during flashing STM with serial port: " + values['-STMDRIVE-'])
+                    flash_micro("STM.PS.hex", values['-STMDRIVE-'])
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e))
+                    continue
                 time.sleep(5)
                 try:
                     serialSTM = serial_open(values['-STMCOM-'], 115200)
-                except:
-                    process_exception(
-                        "Error during opening serial to STM with serial port: " + values['-STMCOM-'])
-
-                if serialSTM == []:
-                    window.Element(
-                        '-OUTPUTTEXT-').Update("Disconnected, check ports settings")
-                    window.refresh()
+                except Exception as e:
+                    process_exception(window, values,
+                                      "Error during opening serial to STM with serial port: " + values['-STMCOM-'] + "\n" + str(e))
+                    continue
 
                 if serialSTM == []:
                     window.Element(
@@ -333,36 +341,27 @@ def main():
                     ax.grid()
                     conf = [['+3V3', "b."], ['+5v', "r."]]
 
-                    # TODO
                     # for each VDD pin channel
                     for powerSupply, color in conf:
                         DataX = np.array([])
                         DataY = np.array([])
 
+                        # send popup to ensure that power supply pins are connected to STM
+                        sg.popup_ok(
+                            "Are 3V3 and 5V pin connected and ready for the test?")
+
                         window.Element(
                             '-OUTPUTTEXT-').Update("Testing Power Supply: " + powerSupply)
                         window.refresh()
 
-                        # send popup to connect next channel
-                        #sg.popup_ok("Connect next channel {}".format(i))
-
-                        # for each tenth value from 0 to 4095
-                        # for x in range(0, 4096, 10):
-                        #    # set new DAC value on Nucleo and save it as X value
-                        #    serial_send(serialSTM, "{:04d}".format(x) + '\n')
-                        #    data = str(serial_receive(serialSTM))
-                        #    DataX = np.append(DataX, int(data))
-
-                        # read value from KL and save it as Y value
-                        #    serial_send(serialKL, '0\n')
-                        #    data = str(serial_receive(serialKL))
-                        #    DataY = np.append(DataY, int(data))
+                        # Receive data from measurement
+                        data = str(serial_receive(serialSTM))
+                        DataX = np.append(DataX, int(data))
 
                         # update canvas and refresh window
                         update_fig(fig_agg, ax, DataX, DataY,
                                    color, "Power Supply " + powerSupply)
                         window.refresh()
-                    ##############
 
                 window.Element('-OUTPUTTEXT-').Update("End of the test")
 
