@@ -344,7 +344,7 @@ def main():
                     # clear canvas and prepare colors for Power Supply
                     ax.cla()
                     ax.grid()
-                    conf = [['+3V3', "b."], ['+5v', "r."]]
+                    conf = [['+3V3', "b."], ['+5V', "r."]]
 
                     # for each VDD pin channel
                     for powerSupply, color in conf:
