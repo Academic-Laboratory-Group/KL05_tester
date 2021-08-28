@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 import serial.tools.list_ports
 import win32api
 
+# onlytestpurposes
+import random as rd
+
 g_possibleTypesOfTest = ['ADC', 'Power Supply']
 
 # -------------------------------------------
@@ -316,13 +319,16 @@ def main():
                 window.refresh()
 
                 # flash devices and then open serial ports
+                # TODO: for test purposes
+                """
                 try:
                     flash_micro("STM.PS.hex", values['-STMDRIVE-'])
                 except Exception as e:
                     process_exception(window, values,
-                                      "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e))
+                                        "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e))
                     continue
                 time.sleep(5)
+                """
                 try:
                     serialSTM = serial_open(values['-STMCOM-'], 115200)
                 except Exception as e:
@@ -334,7 +340,6 @@ def main():
                     window.Element(
                         '-OUTPUTTEXT-').Update("Disconnected, check ports settings")
                     window.refresh()
-
                 else:
                     # clear canvas and prepare colors for Power Supply
                     ax.cla()
@@ -348,15 +353,19 @@ def main():
 
                         # send popup to ensure that power supply pins are connected to STM
                         sg.popup_ok(
-                            "Are 3V3 and 5V pin connected and ready for the test?")
+                            "Is " + powerSupply + " pin connected and ready for the test?")
 
+                        # Some logs for user
                         window.Element(
                             '-OUTPUTTEXT-').Update("Testing Power Supply: " + powerSupply)
                         window.refresh()
 
                         # Receive data from measurement
-                        data = str(serial_receive(serialSTM))
-                        DataX = np.append(DataX, int(data))
+                        # for each tenth value from 0 to 4095
+                        for x in range(0, 4096, 10):
+                            # TODO: data = str(serial_receive(serialSTM))
+                            DataX = np.append(DataX, int(x))  # data))
+                            DataY = np.append(DataY, int(x))  # data))
 
                         # update canvas and refresh window
                         update_fig(fig_agg, ax, DataX, DataY,
@@ -367,7 +376,6 @@ def main():
 
                 # free serial ports
                 serialSTM.close()
-                serialKL.close()
     window.close()
 
 
