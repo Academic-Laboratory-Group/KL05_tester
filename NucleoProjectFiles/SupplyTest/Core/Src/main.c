@@ -67,16 +67,25 @@ static void MX_TIM14_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t Received;
-uint8_t Transmit[4];
+uint8_t Received[7];
+uint8_t Transmit[7] = "";
 
 uint8_t counterMeasurement = 0;
-
-uint16_t PomiarADC;
+uint8_t amountMeasurement = 10;
+uint16_t PomiarADC[2];
 float Voltage;
 
 const float SupplyVoltage = 3.3; // [Volts]
 const float ADCResolution = 4096.0;
+
+uint8_t WhichTest(void);
+
+enum
+{
+	NoneTest = 0,
+	Test3V3 = 1,
+	Test5V = 2,
+};
 /* USER CODE END 0 */
 
 /**
@@ -112,8 +121,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_DMA(&huart2, &Received, 1);
-  HAL_ADC_Start_DMA(&hadc1, &PomiarADC, 1);
+  HAL_UART_Receive_DMA(&huart2, Received, 3);
+  HAL_ADC_Start_DMA(&hadc1, PomiarADC, 2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -200,7 +209,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.NbrOfConversion = 2;
   hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -212,6 +221,14 @@ static void MX_ADC1_Init(void)
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -343,11 +360,15 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	UNUSED(huart);
+	if(WhichTest() == Test3V3 || WhichTest() == Test5V)
+	{
 		HAL_TIM_Base_Start_IT(&htim14);
 		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-
-	HAL_UART_Receive_DMA(&huart2, &Received, 1); // Ponowne włączenie nasłuchiwania
+	}
+	HAL_UART_Receive_DMA(&huart2, Received, 3); // Ponowne włączenie nasłuchiwania
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -355,15 +376,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM14)
 	{
 		counterMeasurement++;
-		Voltage = (SupplyVoltage*PomiarADC)/(ADCResolution-1); // Przeliczenie wartosci zmierzonej na napiecie
+		if (WhichTest() == Test3V3)
+			Voltage = (SupplyVoltage*PomiarADC[0])/(ADCResolution-1); // Przeliczenie wartosci zmierzonej na napiecie
+		else if (WhichTest() == Test5V)
+			Voltage = (SupplyVoltage*PomiarADC[1])/(ADCResolution-1);
+		else if (WhichTest() == NoneTest)
+		{
+			counterMeasurement = 0;
+			HAL_TIM_Base_Stop_IT(&htim14);
+		}
 
 		int size = snprintf(0, 0, "%.2f", Voltage); // convertion float to string
-		char s[size + 1];
-		snprintf(s, sizeof(s), "%.2f", Voltage);
+		char buffer[size + 1];
+		snprintf(buffer, sizeof buffer, "%f", Voltage);
+		sprintf(Transmit, "%s\r\n", buffer);
 
-		HAL_UART_Transmit_DMA(&huart2, s , 4);
+		HAL_UART_Transmit_DMA(&huart2, Transmit , 7);
 
-		if (counterMeasurement == 10)
+		if (counterMeasurement == amountMeasurement)
 		{
 			counterMeasurement = 0;
 			HAL_TIM_Base_Stop_IT(&htim14);
@@ -372,10 +402,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+uint8_t WhichTest(void)
 {
-	PomiarADC = HAL_ADC_GetValue(&hadc1); // Pobranie zmierzonej wartosci
+	if (Received[0] == '3' && Received[1] == 'V' && Received[2] == '3')
+		return Test3V3;
+	else if (Received[0] == '5' && Received[1] == 'V' && Received[2] == ' ')
+		return Test5V;
+	else
+		return NoneTest;
 }
+
 /* USER CODE END 4 */
 
 /**
