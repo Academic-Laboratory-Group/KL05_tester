@@ -55,14 +55,15 @@ SupplyTest.bin \
 
 
 # All Target
-all: main-build
+all:
+	+@$(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
 
 # Main-build Target
 main-build: SupplyTest.elf secondary-outputs
 
 # Tool invocations
-SupplyTest.elf: $(OBJS) $(USER_OBJS) D:\Pulpit\Projekt\SupplyTest\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "SupplyTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Pulpit\Projekt\SupplyTest\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SupplyTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+SupplyTest.elf: $(OBJS) $(USER_OBJS) D:\STUDIA\Magisterka\1ROK\TiN\Projekt\KL05_tester\NucleoProjectFiles\SupplyTest\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "SupplyTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STUDIA\Magisterka\1ROK\TiN\Projekt\KL05_tester\NucleoProjectFiles\SupplyTest\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SupplyTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -86,6 +87,10 @@ clean:
 	-$(RM) *
 	-@echo ' '
 
+post-build:
+	arm-none-eabi-objcopy -O ihex SupplyTest.elf SupplyTest.hex
+	-@echo ' '
+
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
@@ -96,6 +101,6 @@ warn-no-linker-script-specified:
 	@echo 'Warning: No linker script specified. Check the linker settings in the build configuration.'
 
 .PHONY: all clean dependents fail-specified-linker-script-missing warn-no-linker-script-specified
-.SECONDARY:
+.SECONDARY: post-build
 
 -include ../makefile.targets

@@ -75,7 +75,7 @@ uint8_t counterMeasurement = 0;
 uint16_t PomiarADC;
 float Voltage;
 
-const float SupplyVoltage = 3.0; // [Volts]
+const float SupplyVoltage = 3.3; // [Volts]
 const float ADCResolution = 4096.0;
 /* USER CODE END 0 */
 
@@ -344,13 +344,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-
-//	static uint8_t Data[40]; // Tablica przechowujaca wysylana wiadomosc.
-//
-//	sprintf(Data, "Odebrana wiadomosc: %s\n\r", &Received);
-//	HAL_UART_Transmit_DMA(&huart2, Data, 40); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
-
-
 		HAL_TIM_Base_Start_IT(&htim14);
 		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 
