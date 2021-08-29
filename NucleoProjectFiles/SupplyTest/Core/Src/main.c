@@ -345,10 +345,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
-	static uint8_t Data[40]; // Tablica przechowujaca wysylana wiadomosc.
-
-	sprintf(Data, "Odebrana wiadomosc: %s\n\r", &Received);
-	HAL_UART_Transmit_DMA(&huart2, Data, 40); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
+//	static uint8_t Data[40]; // Tablica przechowujaca wysylana wiadomosc.
+//
+//	sprintf(Data, "Odebrana wiadomosc: %s\n\r", &Received);
+//	HAL_UART_Transmit_DMA(&huart2, Data, 40); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
 
 
 		HAL_TIM_Base_Start_IT(&htim14);
