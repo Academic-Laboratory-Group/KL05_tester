@@ -164,6 +164,18 @@ def flash_micro(file, drive):
 
 
 # -----------------------------------------------------------------
+# Copying hex file to proper path (forked implementation compatibility)
+# -----------------------------------------------------------------
+def set_hex_file_to_proper_path(testName, drive):
+    command = 'cmd /c "copy ..\\hexFiles\\NucleoProjectFiles\\' + \
+        testName + '\\Debug\\' + testName + '.hex hexFiles\\'
+    print(command)
+    if os.system(command):
+        raise Exception('Flash error with output: ' +
+                        subprocess.check_output(['ls', '-l']))
+
+
+# -----------------------------------------------------------------
 # Exception info on popup window
 # -----------------------------------------------------------------
 def process_exception(window, values, message):
@@ -185,11 +197,10 @@ def refreshGUIForTest(window, test):
         window.Element('-KLDRIVE-').Update(disabled=True)
         window.Element('-KLCOM-').Update(disabled=True)
 
+
 # ------------
 # Main program
 # ------------
-
-
 def main():
     # define the form layout
     layout = create_layout()
