@@ -4,6 +4,7 @@ import sys
 import time
 import subprocess
 
+import struct
 import PySimpleGUI as sg
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -159,8 +160,7 @@ def flash_micro(file, drive):
     command = 'cmd /c "copy hexFiles\\{} {}"'.format(file, drive)
     print(command)
     if os.system(command):
-        raise Exception('Flash error with output: ' +
-                        subprocess.check_output(['ls', '-l']))
+        raise Exception(subprocess.check_output(['ls', '-l']))
 
 
 # -----------------------------------------------------------------
@@ -318,16 +318,14 @@ def main():
                 window.refresh()
 
                 # flash devices and then open serial ports
-                # TODO: for test purposes
-                """
                 try:
-                    flash_micro("STM.PS.hex", values['-STMDRIVE-'])
+                    flash_micro("STM.SupplyTest.hex", values['-STMDRIVE-'])
                 except Exception as e:
                     process_exception(window, values,
-                                        "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e))
+                                      "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e) + '. Remember to check if disk is properly choosen!')
                     continue
                 time.sleep(5)
-                """
+
                 try:
                     serialSTM = serial_open(values['-STMCOM-'], 115200)
                 except Exception as e:
@@ -352,7 +350,7 @@ def main():
 
                         # send popup to ensure that power supply pins are connected to STM
                         sg.popup_ok(
-                            "Is " + powerSupply + " pin connected and ready for the test?")
+                            "Is " + powerSupply + " pin connected to A0 pin and ready for the test?")
 
                         # Some logs for user
                         window.Element(
@@ -362,9 +360,16 @@ def main():
                         # Receive data from measurement
                         # for each tenth value from 0 to 4095
                         for x in range(0, 4096, 10):
-                            # TODO: data = str(serial_receive(serialSTM))
-                            DataX = np.append(DataX, int(x))  # data))
-                            DataY = np.append(DataY, int(x))  # data))
+                            try:
+                                serial_send(serialSTM, powerSupply)
+                                data = str(serial_receive(serialSTM))
+                            except Exception as e:
+                                process_exception(window, values,
+                                                  "Error during UART transmission: " + values['-STMCOM-'] + "\n" + str(e))
+                                break
+
+                            DataX = np.append(DataX, float(data))
+                            DataY = np.append(DataY, x)
 
                         # update canvas and refresh window
                         update_fig(fig_agg, ax, DataX, DataY,
