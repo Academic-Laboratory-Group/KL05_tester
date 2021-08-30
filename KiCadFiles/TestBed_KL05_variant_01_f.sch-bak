@@ -28,7 +28,7 @@ Connection ~ 3250 8200
 Wire Wire Line
 	3250 8200 3250 8100
 $Comp
-L Device:Jumper_NC_Small JP1
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP1
 U 1 1 606F247C
 P 3550 7800
 F 0 "JP1" H 3700 7850 50  0000 C CNN
@@ -51,7 +51,7 @@ Wire Wire Line
 Wire Wire Line
 	3450 7800 3250 7800
 $Comp
-L Device:Jumper_NC_Small JP2
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP2
 U 1 1 606F89B6
 P 3550 7900
 F 0 "JP2" H 3700 7950 50  0000 C CNN
@@ -62,7 +62,7 @@ F 3 "~" H 3550 7900 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:Jumper_NC_Small JP3
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP3
 U 1 1 606F8BF6
 P 3550 8000
 F 0 "JP3" H 3700 8050 50  0000 C CNN
@@ -73,7 +73,7 @@ F 3 "~" H 3550 8000 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:Jumper_NC_Small JP4
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP4
 U 1 1 606F8E45
 P 3550 8100
 F 0 "JP4" H 3700 8150 50  0000 C CNN
@@ -84,7 +84,7 @@ F 3 "~" H 3550 8100 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:Jumper_NC_Small JP5
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP5
 U 1 1 606F9067
 P 3550 8200
 F 0 "JP5" H 3700 8250 50  0000 C CNN
@@ -95,7 +95,7 @@ F 3 "~" H 3550 8200 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:Jumper_NC_Small JP6
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP6
 U 1 1 606F927F
 P 3550 8300
 F 0 "JP6" H 3700 8350 50  0000 C CNN
@@ -26038,7 +26038,7 @@ Wire Wire Line
 Wire Wire Line
 	8400 1750 7000 1750
 $Comp
-L Device:R_Small R1
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R1
 U 1 1 60F11522
 P 7900 2700
 F 0 "R1" V 7850 2450 50  0000 C CNN
@@ -26051,7 +26051,7 @@ $EndComp
 Wire Wire Line
 	7800 2700 7000 2700
 $Comp
-L Device:R_Small R2
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R2
 U 1 1 60F11FE1
 P 7900 2800
 F 0 "R2" V 7850 2550 50  0000 C CNN
@@ -26064,7 +26064,7 @@ $EndComp
 Wire Wire Line
 	7800 2800 7000 2800
 $Comp
-L Device:R_Small R3
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R3
 U 1 1 60F12134
 P 7900 2900
 F 0 "R3" V 7850 2650 50  0000 C CNN
@@ -26077,7 +26077,7 @@ $EndComp
 Wire Wire Line
 	7800 2900 7000 2900
 $Comp
-L Device:R_Small R4
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R4
 U 1 1 60F1221D
 P 7900 3000
 F 0 "R4" V 7850 2750 50  0000 C CNN
@@ -26090,7 +26090,7 @@ $EndComp
 Wire Wire Line
 	7800 3000 7000 3000
 $Comp
-L Device:R_Small R5
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R5
 U 1 1 60F12390
 P 7900 3100
 F 0 "R5" V 7850 2850 50  0000 C CNN
@@ -26103,7 +26103,7 @@ $EndComp
 Wire Wire Line
 	7800 3100 7000 3100
 $Comp
-L Device:R_Small R6
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R6
 U 1 1 60F1244F
 P 7900 3200
 F 0 "R6" V 7850 2950 50  0000 C CNN
@@ -26116,7 +26116,7 @@ $EndComp
 Wire Wire Line
 	7800 3200 7000 3200
 $Comp
-L Device:R_Small R15
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R15
 U 1 1 60F12647
 P 10600 2500
 F 0 "R15" V 10550 2250 50  0000 C CNN
@@ -26129,7 +26129,7 @@ $EndComp
 Wire Wire Line
 	10700 2500 11200 2500
 $Comp
-L Device:R_Small R16
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R16
 U 1 1 60F12DE3
 P 10600 2600
 F 0 "R16" V 10550 2350 50  0000 C CNN
@@ -26142,7 +26142,7 @@ $EndComp
 Wire Wire Line
 	10700 2600 11200 2600
 $Comp
-L Device:R_Small R17
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R17
 U 1 1 60F1319D
 P 10600 2700
 F 0 "R17" V 10550 2450 50  0000 C CNN
@@ -26155,7 +26155,7 @@ $EndComp
 Wire Wire Line
 	10700 2700 11200 2700
 $Comp
-L Device:R_Small R18
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R18
 U 1 1 60F13300
 P 10600 2800
 F 0 "R18" V 10550 2550 50  0000 C CNN
@@ -26168,7 +26168,7 @@ $EndComp
 Wire Wire Line
 	10700 2800 11200 2800
 $Comp
-L Device:R_Small R19
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R19
 U 1 1 60F13429
 P 10600 2900
 F 0 "R19" V 10550 2650 50  0000 C CNN
@@ -26181,7 +26181,7 @@ $EndComp
 Wire Wire Line
 	10700 2900 11200 2900
 $Comp
-L Device:R_Small R20
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R20
 U 1 1 60F1357B
 P 10600 3000
 F 0 "R20" V 10550 2750 50  0000 C CNN
@@ -26194,7 +26194,7 @@ $EndComp
 Wire Wire Line
 	10700 3000 11200 3000
 $Comp
-L Device:R_Small R21
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R21
 U 1 1 60F136ED
 P 10600 3100
 F 0 "R21" V 10550 2850 50  0000 C CNN
@@ -26207,7 +26207,7 @@ $EndComp
 Wire Wire Line
 	10700 3100 11200 3100
 $Comp
-L Device:R_Small R22
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R22
 U 1 1 60F1382B
 P 10600 3200
 F 0 "R22" V 10550 2950 50  0000 C CNN
@@ -26220,7 +26220,7 @@ $EndComp
 Wire Wire Line
 	10700 3200 11200 3200
 $Comp
-L Device:R_Small R7
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R7
 U 1 1 60F1395E
 P 10600 1450
 F 0 "R7" V 10550 1200 50  0000 C CNN
@@ -26233,7 +26233,7 @@ $EndComp
 Wire Wire Line
 	10500 1450 10000 1450
 $Comp
-L Device:R_Small R8
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R8
 U 1 1 60F13D06
 P 10600 1550
 F 0 "R8" V 10550 1300 50  0000 C CNN
@@ -26246,7 +26246,7 @@ $EndComp
 Wire Wire Line
 	10700 1550 11200 1550
 $Comp
-L Device:R_Small R9
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R9
 U 1 1 60F141AC
 P 10600 1850
 F 0 "R9" V 10550 1600 50  0000 C CNN
@@ -26259,7 +26259,7 @@ $EndComp
 Wire Wire Line
 	10700 1850 11200 1850
 $Comp
-L Device:R_Small R10
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R10
 U 1 1 60F144C4
 P 10600 1950
 F 0 "R10" V 10550 1700 50  0000 C CNN
@@ -26272,7 +26272,7 @@ $EndComp
 Wire Wire Line
 	10700 1950 11200 1950
 $Comp
-L Device:R_Small R11
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R11
 U 1 1 60F14636
 P 10600 2050
 F 0 "R11" V 10550 1800 50  0000 C CNN
@@ -26285,7 +26285,7 @@ $EndComp
 Wire Wire Line
 	10700 2050 11200 2050
 $Comp
-L Device:R_Small R12
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R12
 U 1 1 60F147E6
 P 10600 2150
 F 0 "R12" V 10550 1900 50  0000 C CNN
@@ -26298,7 +26298,7 @@ $EndComp
 Wire Wire Line
 	10700 2150 11200 2150
 $Comp
-L Device:R_Small R13
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R13
 U 1 1 60F14951
 P 10600 2250
 F 0 "R13" V 10550 2000 50  0000 C CNN
@@ -26311,7 +26311,7 @@ $EndComp
 Wire Wire Line
 	10700 2250 11200 2250
 $Comp
-L Device:R_Small R14
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R14
 U 1 1 60F14AB3
 P 10600 2350
 F 0 "R14" V 10550 2100 50  0000 C CNN
@@ -26364,7 +26364,7 @@ Wire Notes Line
 Wire Notes Line
 	6300 3550 7550 3550
 $Comp
-L power:GND #PWR0101
+L TestBed_KL05_variant_01_f-rescue:GND-power #PWR0101
 U 1 1 6102BF9F
 P 5800 3150
 F 0 "#PWR0101" H 5800 2900 50  0001 C CNN
@@ -26593,4 +26593,42 @@ NoConn ~ 5500 2000
 NoConn ~ 5500 3300
 NoConn ~ 5500 3400
 NoConn ~ 3300 2800
+$Comp
+L TestBed_KL05_variant_01_f-rescue:R_Small-Device R23
+U 1 1 612D32FB
+P 7400 8000
+F 0 "R23" V 7350 7750 50  0000 C CNN
+F 1 "6.8 5W" V 7295 8000 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0411_L9.9mm_D3.6mm_P12.70mm_Horizontal" H 7400 8000 50  0001 C CNN
+F 3 "~" H 7400 8000 50  0001 C CNN
+	1    7400 8000
+	0    1    1    0   
+$EndComp
+Text Notes 6450 7650 0    50   ~ 10
+CONFIGURATION SETUP FOR POWER SUPPLY TEST\n
+Wire Wire Line
+	7300 8000 6800 8000
+Wire Wire Line
+	6800 8000 6800 7850
+Wire Wire Line
+	6800 8000 6800 8150
+Connection ~ 6800 8000
+Wire Wire Line
+	6800 7850 6500 7850
+Wire Wire Line
+	6800 8150 6500 8150
+Text Label 6500 8150 0    50   ~ 0
+PA0
+Wire Wire Line
+	7500 8000 8250 8000
+Text Label 8250 8000 2    50   ~ 0
+GND
+Text Label 6500 7850 0    50   ~ 0
+T_P3V3
+Wire Notes Line
+	6400 8400 6400 7550
+Wire Notes Line
+	6400 8400 8400 8400
+Wire Notes Line
+	8400 8400 8400 7550
 $EndSCHEMATC

@@ -1,3 +1,5 @@
 (sym_lib_table
   (lib (name TestBed_KL05_Library)(type Legacy)(uri ${KIPRJMOD}/TestBed_KL05_Library.lib)(options "")(descr ""))
+  (lib (name TestBed_KL05_variant_02_f-rescue)(type Legacy)(uri ${KIPRJMOD}/TestBed_KL05_variant_02_f-rescue.lib)(options "")(descr ""))
+  (lib (name TestBed_KL05_variant_01_f-rescue)(type Legacy)(uri ${KIPRJMOD}/TestBed_KL05_variant_01_f-rescue.lib)(options "")(descr ""))
 )

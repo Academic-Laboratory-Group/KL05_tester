@@ -68,12 +68,14 @@ static void MX_TIM14_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t Received[7];
-uint8_t Transmit[7] = "";
 
 uint8_t counterMeasurement = 0;
-uint8_t amountMeasurement = 10;
+uint8_t amountMeasurement = 20;
 uint16_t PomiarADC[2];
+
 float Voltage;
+float Current;
+float Time;
 
 const float SupplyVoltage = 3.3; // [Volts]
 const float ADCResolution = 4096.0;
@@ -86,6 +88,12 @@ enum
 	Test3V3 = 1,
 	Test5V = 2,
 };
+
+
+/////////////
+const float Resistance = 10.0;//ohm
+const float PeriodMeasurement = 0.5;
+///////////
 /* USER CODE END 0 */
 
 /**
@@ -257,7 +265,7 @@ static void MX_TIM14_Init(void)
   htim14.Instance = TIM14;
   htim14.Init.Prescaler = 8399;
   htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim14.Init.Period = 9999;
+  htim14.Init.Period = (PeriodMeasurement*10000) - 1;
   htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
@@ -386,12 +394,25 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_Base_Stop_IT(&htim14);
 		}
 
-		int size = snprintf(0, 0, "%.2f", Voltage); // convertion float to string
-		char buffer[size + 1];
-		snprintf(buffer, sizeof buffer, "%f", Voltage);
+		Current = Voltage/Resistance;
+
+		int sizeVoltage = snprintf(0, 0, "%.2f", Voltage); // convertion float to string
+		int sizeCurrent = snprintf(0, 0, "%.2f", Current);
+		int sizeTime = snprintf(0, 0, "%.2f", PeriodMeasurement*counterMeasurement);
+
+		int size = sizeVoltage + sizeCurrent + sizeTime + 6;
+		char buffer[size];
+
+		snprintf(buffer, sizeVoltage, "%f", Voltage);
+		snprintf(buffer + sizeVoltage, 1, ';');
+		snprintf(buffer + sizeVoltage + 1, sizeCurrent, "%f", Current);
+		snprintf(buffer + sizeVoltage + 1 + sizeCurrent, 1, ';');
+		snprintf(buffer + sizeVoltage + 1 + sizeCurrent + 1, sizeTime, "%f", PeriodMeasurement*counterMeasurement);
+
+		uint8_t Transmit[size + 1];
 		sprintf(Transmit, "%s\r\n", buffer);
 
-		HAL_UART_Transmit_DMA(&huart2, Transmit , 7);
+		HAL_UART_Transmit_DMA(&huart2, Transmit , size + 1);
 
 		if (counterMeasurement == amountMeasurement)
 		{
@@ -406,7 +427,7 @@ uint8_t WhichTest(void)
 {
 	if (Received[0] == '3' && Received[1] == 'V' && Received[2] == '3')
 		return Test3V3;
-	else if (Received[0] == '5' && Received[1] == 'V' && Received[2] == ' ')
+	else if (Received[0] == '+' && Received[1] == '5' && Received[2] == 'V')
 		return Test5V;
 	else
 		return NoneTest;
