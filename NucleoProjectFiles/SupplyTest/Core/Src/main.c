@@ -70,12 +70,8 @@ static void MX_TIM14_Init(void);
 uint8_t Received[7];
 
 uint8_t counterMeasurement = 0;
-uint8_t amountMeasurement = 20;
+uint8_t amountMeasurement = 30;
 uint16_t PomiarADC[2];
-
-float Voltage;
-float Current;
-float Time;
 
 const float SupplyVoltage = 3.3; // [Volts]
 const float ADCResolution = 4096.0;
@@ -383,6 +379,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM14)
 	{
+		float Voltage;
+		float Current;
+		float Time;
+
 		counterMeasurement++;
 		if (WhichTest() == Test3V3)
 			Voltage = (SupplyVoltage*PomiarADC[0])/(ADCResolution-1); // Przeliczenie wartosci zmierzonej na napiecie
@@ -395,19 +395,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 
 		Current = Voltage/Resistance;
+		Time = PeriodMeasurement*counterMeasurement;
 
 		int sizeVoltage = snprintf(0, 0, "%.2f", Voltage); // convertion float to string
 		int sizeCurrent = snprintf(0, 0, "%.2f", Current);
-		int sizeTime = snprintf(0, 0, "%.2f", PeriodMeasurement*counterMeasurement);
+		int sizeTime = snprintf(0, 0, "%.2f", Time);
 
 		int size = sizeVoltage + sizeCurrent + sizeTime + 6;
 		char buffer[size];
 
-		snprintf(buffer, sizeVoltage, "%f", Voltage);
-		snprintf(buffer + sizeVoltage, 1, ';');
-		snprintf(buffer + sizeVoltage + 1, sizeCurrent, "%f", Current);
-		snprintf(buffer + sizeVoltage + 1 + sizeCurrent, 1, ';');
-		snprintf(buffer + sizeVoltage + 1 + sizeCurrent + 1, sizeTime, "%f", PeriodMeasurement*counterMeasurement);
+		snprintf(buffer, size,"%.2f;%.2f;%.2f", Voltage,Current,Time);
 
 		uint8_t Transmit[size + 1];
 		sprintf(Transmit, "%s\r\n", buffer);
