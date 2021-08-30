@@ -4,7 +4,6 @@ import sys
 import time
 import subprocess
 
-import struct
 import PySimpleGUI as sg
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -54,8 +53,6 @@ def serial_ports():
 def drive_list():
     drives = win32api.GetLogicalDriveStrings()
     drives = drives.split('\000')[:-1]
-    # TO DO
-    # make discs names appear
 
     return drives
 
@@ -129,7 +126,7 @@ def update_fig(fig_agg, ax, x, y, c, label):
 def serial_open(port_number, speed):
     ser = []
     try:
-        ser = serial.Serial(port_number, speed, timeout=0.1)
+        ser = serial.Serial(port_number, speed, timeout=2)
     except:
         sg.popup("Serial disconnected: " + port_number)
     return ser
@@ -157,7 +154,9 @@ def serial_send(my_serial, data):
 # Flashing is done by copying the .hex file to the appropriate disk
 # -----------------------------------------------------------------
 def flash_micro(file, drive):
-    command = 'cmd /c "copy hexFiles\\{} {}"'.format(file, drive)
+    currentpath = os.path.dirname(os.path.abspath(__file__))
+    command = 'cmd /c "copy ' + currentpath + \
+        '\\hexFiles\\{} {}"'.format(file, drive)
     print(command)
     if os.system(command):
         raise Exception(subprocess.check_output(['ls', '-l']))
@@ -319,7 +318,7 @@ def main():
 
                 # flash devices and then open serial ports
                 try:
-                    flash_micro("STM.SupplyTest.hex", values['-STMDRIVE-'])
+                    flash_micro('STM.SupplyTest.hex', values['-STMDRIVE-'])
                 except Exception as e:
                     process_exception(window, values,
                                       "Error during flashing STM with serial port: " + values['-STMDRIVE-'] + "\n" + str(e) + '. Remember to check if disk is properly choosen!')
@@ -341,10 +340,10 @@ def main():
                     # clear canvas and prepare colors for Power Supply
                     ax.cla()
                     ax.grid()
-                    conf = [['+3V3', "b."], ['+5V', "r."]]
+                    conf = [["3V3", "b.", "r."]]  # , ["+5V", "b.", "r."]]
 
                     # for each VDD pin channel
-                    for powerSupply, color in conf:
+                    for powerSupply, v_color, i_color in conf:
                         DataX = np.array([])
                         DataY = np.array([])
 
@@ -357,16 +356,22 @@ def main():
                             '-OUTPUTTEXT-').Update("Testing Power Supply: " + powerSupply)
                         window.refresh()
 
+                        # Send test case to STM
+                        serial_send(serialSTM, powerSupply)
+
                         # Receive data from measurement
                         # for each tenth value from 0 to 4095
-                        for x in range(0, 4096, 10):
+                        for x in range(0, 10):
                             try:
-                                serial_send(serialSTM, powerSupply)
                                 data = str(serial_receive(serialSTM))
                             except Exception as e:
                                 process_exception(window, values,
                                                   "Error during UART transmission: " + values['-STMCOM-'] + "\n" + str(e))
                                 break
+                            try:
+                                float(data)
+                            except:
+                                continue
 
                             DataX = np.append(DataX, 0)
                             DataY = np.append(DataY, x)
