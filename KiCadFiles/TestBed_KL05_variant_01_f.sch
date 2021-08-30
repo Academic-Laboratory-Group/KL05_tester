@@ -26628,7 +26628,20 @@ Wire Notes Line
 Wire Notes Line
 	8400 7550 8400 8600
 Wire Wire Line
-	6800 8000 7400 8000
+	6800 8000 7000 8000
 Wire Wire Line
 	7600 8000 8250 8000
+$Comp
+L TestBed_KL05_variant_01_f-rescue:Jumper_NC_Small-Device JP7
+U 1 1 612DF240
+P 7100 8000
+F 0 "JP7" H 7250 8050 50  0000 C CNN
+F 1 "Jumper" H 7750 8050 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7100 8000 50  0001 C CNN
+F 3 "~" H 7100 8000 50  0001 C CNN
+	1    7100 8000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	7200 8000 7400 8000
 $EndSCHEMATC
