@@ -368,7 +368,7 @@ def main():
                                                   "Error during UART transmission: " + values['-STMCOM-'] + "\n" + str(e))
                                 break
 
-                            DataX = np.append(DataX, float(data))
+                            DataX = np.append(DataX, 0)
                             DataY = np.append(DataY, x)
 
                         # update canvas and refresh window
