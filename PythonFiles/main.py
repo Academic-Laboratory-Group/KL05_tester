@@ -11,16 +11,12 @@ import matplotlib.pyplot as plt
 import serial.tools.list_ports
 import win32api
 
-# onlytestpurposes
-import random as rd
-
 g_possibleTypesOfTest = ['ADC', 'Power Supply']
+
 
 # -------------------------------------------
 # Function to find all available serial ports
 # -------------------------------------------
-
-
 def serial_ports():
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -91,33 +87,10 @@ def create_layout():
                      pad=((20, 0), 3), font='Helvetica 14')]]
     layout = [[sg.Text('KL05 Tester', size=(40, 1),
                        justification='center', font='Helvetica 20')],
-              [sg.Canvas(size=(640, 480), key='-CANVAS-')],
+              [sg.Graph((640, 480), (0, 0), (640, 480), key='-CANVAS-')],
               [sg.Column(col1, vertical_alignment='top'), sg.Column(col2, vertical_alignment='top')]]
 
     return layout
-
-
-# ------------------------------
-# Function to create main layout
-# ------------------------------
-def draw_figure(canvas, figure):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    return figure_canvas_agg
-
-
-# ---------------------------------------
-# Function to draw on a matplotlib canvas
-# ---------------------------------------
-def update_fig(fig_agg, ax, x, y, c, label):
-    ax.set_xlabel("Given value")
-    ax.set_ylabel("Measured value")
-    ax.set_xlim([-1, 4200])
-    ax.set_ylim([-1, 4200])
-    ax.plot(x, y, c, label=label)
-    plt.legend(loc="upper left")
-    fig_agg.draw()
 
 
 # ----------------
@@ -172,17 +145,67 @@ def process_exception(window, values, message):
     window.refresh()
 
 
+# ---------------------------------------
+# Function to draw on a matplotlib canvas
+# ---------------------------------------
+def update_figADC(fig, ax, ax2, x, y, c, label):
+    ax2.cla()
+    ax2.set_yticks([])
+    ax.cla()
+    ax.grid()
+    ax.set_xlabel("Given value")
+    ax.set_ylabel("Measured value")
+    ax.set_xlim([-1, 4200])
+    ax.set_ylim([-1, 4200])
+    ax.plot(x, y, c, label=label)
+    fig.tight_layout()
+    fig.canvas.draw()
+
+
+# ---------------------------------------
+# Function to draw on a matplotlib canvas
+# figure for Power Supply test
+# ---------------------------------------
+def update_figPS(fig, ax1, ax2, x, y1, y2, c1, c2):
+    ax1.cla()
+    ax2.cla()
+    ax1.grid()
+    ax2.grid()
+    ax1.set_xlabel("Time [s]")
+    ax1.set_ylabel("Voltage [V]")
+    ax1.plot(x, y1, c1, label="Voltage [V]")
+    ax2.set_ylabel("Current [A]")
+    ax2.plot(x, y2, c2, label="Current [A]")
+    fig.tight_layout()
+    fig.canvas.draw()
+
+
 # -----------------------------------------------------------------
-# Block unused settings
+# Init GUI with options to the default test
 # -----------------------------------------------------------------
-def refreshGUIForTest(window, test):
+def refresh_GUI(window, test, fig, ax, ax2):
     if test == "ADC":
         window.Element('-KLDRIVE-').Update(disabled=False)
         window.Element('-KLCOM-').Update(disabled=False)
+        update_figADC(fig, ax, ax2, 0, 0, "b.", "")
+
     elif test == "Power Supply":
-        window.refresh()
         window.Element('-KLDRIVE-').Update(disabled=True)
         window.Element('-KLCOM-').Update(disabled=True)
+        update_figPS(fig, ax, ax2, 0, 0, 0, "b.", "r.")
+
+    window.refresh()
+
+
+# -----------------------------------------------------------------
+# Parse data from PowerSupply test
+# -----------------------------------------------------------------
+def parse_power_supply_received_data(data):
+    values = data.lstrip("\x00").rstrip("\n\r").split(';')
+    if len(values) == 1:
+        return [float(-1), float(-1), float(-1)]
+    else:
+        return [float(values[0]), float(values[1]), float(values[2])]
 
 
 # ------------
@@ -195,14 +218,19 @@ def main():
     # create the form and show it without the plot
     window = sg.Window('KL05 Tester', layout, finalize=True)
 
-    # create canvas element
-    canvas_elem = window['-CANVAS-']
-    canvas = canvas_elem.TKCanvas
+    # Default settings for matplotlib graphics
+    fig, ax = plt.subplots()
+    plt.legend(loc="upper left")
+    ax2 = ax.twinx()
+
+    # Link matplotlib to PySimpleGUI Graph
+    canvas = FigureCanvasTkAgg(fig, window['-CANVAS-'].Widget)
+    plot_widget = canvas.get_tk_widget()
+    plot_widget.grid(row=0, column=0)
 
     # draw the initial plot in the window
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    fig_agg = draw_figure(canvas, fig)
+    refresh_GUI(window, 'ADC', fig, ax, ax2)
+
     window.Element('-OUTPUTTEXT-').Update("")
 
     # program loop
@@ -221,7 +249,7 @@ def main():
                                               value=serialList[0])
 
         elif event in '-TESTTYPE-':
-            refreshGUIForTest(window, values['-TESTTYPE-'])
+            refresh_GUI(window, values['-TESTTYPE-'], fig, ax, ax2)
 
         # check if start button was pressed
         elif event in '-STARTBUTTON-':
@@ -267,9 +295,6 @@ def main():
                     window.refresh()
 
                 else:
-                    # clear canvas and prepare colors for ADC channels
-                    ax.cla()
-                    ax.grid()
                     color = ["b.", "r.", "y.", "g.", "c.", "m."]
 
                     # for each ADC channel
@@ -300,8 +325,8 @@ def main():
                             DataY = np.append(DataY, int(data))
 
                         # update canvas and refresh window
-                        update_fig(fig_agg, ax, DataX, DataY,
-                                   color[i], "ADC {}".format(i))
+                        update_figADC(fig, ax, ax2, DataX, DataY,
+                                      color[i], "ADC {}".format(i))
                         window.refresh()
 
                     window.Element('-OUTPUTTEXT-').Update("End of the test")
@@ -337,15 +362,13 @@ def main():
                         '-OUTPUTTEXT-').Update("Disconnected, check ports settings")
                     window.refresh()
                 else:
-                    # clear canvas and prepare colors for Power Supply
-                    ax.cla()
-                    ax.grid()
                     conf = [["3V3", "b.", "r."]]  # , ["+5V", "b.", "r."]]
 
                     # for each VDD pin channel
-                    for powerSupply, v_color, i_color in conf:
-                        DataX = np.array([])
-                        DataY = np.array([])
+                    for powerSupply, v_color, c_color in conf:
+                        d_time = np.array([])
+                        d_voltage = np.array([])
+                        d_current = np.array([])
 
                         # send popup to ensure that power supply pins are connected to STM
                         sg.popup_ok(
@@ -361,25 +384,32 @@ def main():
 
                         # Receive data from measurement
                         # for each tenth value from 0 to 4095
-                        for x in range(0, 10):
+                        while True:
                             try:
                                 data = str(serial_receive(serialSTM))
                             except Exception as e:
                                 process_exception(window, values,
                                                   "Error during UART transmission: " + values['-STMCOM-'] + "\n" + str(e))
                                 break
+
                             try:
-                                float(data)
-                            except:
-                                continue
+                                [v, c, t] = parse_power_supply_received_data(
+                                    data)
+                                if t == -1:
+                                    break
+                            except Exception as e:
+                                process_exception(window, values,
+                                                  "Error during UART transmission: " + values['-STMCOM-'] + "\n" + str(e))
+                                break
 
-                            DataX = np.append(DataX, 0)
-                            DataY = np.append(DataY, x)
+                            d_time = np.append(d_time, t)
+                            d_voltage = np.append(d_voltage, v)
+                            d_current = np.append(d_current, c)
 
-                        # update canvas and refresh window
-                        update_fig(fig_agg, ax, DataX, DataY,
-                                   color, "Power Supply " + powerSupply)
-                        window.refresh()
+                            # update canvas and refresh window
+                            update_figPS(fig, ax, ax2, d_time, d_voltage, d_current,
+                                         v_color, c_color)
+                            window.refresh()
 
                 window.Element('-OUTPUTTEXT-').Update("End of the test")
 
