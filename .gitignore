@@ -1,2 +1,8 @@
 **/Debug/
 **/Release/
+**__pycache__/
+PythonFiles/build/
+PythonFiles/dist/
+**/main.spec
+
+
