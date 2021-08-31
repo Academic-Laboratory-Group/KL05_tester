@@ -159,6 +159,7 @@ def update_figADC(fig, ax, ax2, x, y, c, label):
     ax.set_ylim([-1, 4200])
     ax.plot(x, y, c, label=label)
     fig.tight_layout()
+    plt.legend(loc="upper left")
     fig.canvas.draw()
 
 
@@ -173,9 +174,14 @@ def update_figPS(fig, ax1, ax2, x, y1, y2, c1, c2):
     ax2.grid()
     ax1.set_xlabel("Time [s]")
     ax1.set_ylabel("Voltage [V]")
-    ax1.plot(x, y1, c1, label="Voltage [V]")
+    line1 = ax1.plot(x, y1, c1, label="Voltage [V]")
     ax2.set_ylabel("Current [A]")
-    ax2.plot(x, y2, c2, label="Current [A]")
+    line2 = ax2.plot(x, y2, c2, label="Current [A]")
+
+    # added these three lines
+    lns = line1+line2
+    labs = [l.get_label() for l in lns]
+    ax1.legend(lns, labs, loc="upper right")
     fig.tight_layout()
     fig.canvas.draw()
 
@@ -220,7 +226,6 @@ def main():
 
     # Default settings for matplotlib graphics
     fig, ax = plt.subplots()
-    plt.legend(loc="upper left")
     ax2 = ax.twinx()
 
     # Link matplotlib to PySimpleGUI Graph
