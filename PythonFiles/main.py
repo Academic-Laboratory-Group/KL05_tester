@@ -248,10 +248,15 @@ def main():
         # check ports on refresh button pressed
         elif event in '-REFRESHBUTTON-':
             serialList = serial_ports()
+            driveList = drive_list()
             window.Element('-KLCOM-').Update(values=serialList,
                                              value=serialList[0])
             window.Element('-STMCOM-').Update(values=serialList,
                                               value=serialList[0])
+            window.Element('-KLDRIVE-').Update(values=driveList,
+                                               value=driveList[0])
+            window.Element('-STMDRIVE-').Update(values=driveList,
+                                                value=driveList[0])
 
         elif event in '-TESTTYPE-':
             refresh_GUI(window, values['-TESTTYPE-'], fig, ax, ax2)
